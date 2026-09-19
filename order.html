@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order · Mysuru Coffee Bar</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #EDE3D0;
+      --paper: #FBF7EF;
+      --ink: #2B1B12;
+      --ink-soft: #6B5844;
+      --accent: #8A5A2B;
+      --accent-dark: #6E4520;
+      --sage: #5B6B4D;
+      --rust: #A63D2F;
+      --line: #D8C9AC;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Work Sans', sans-serif;
+      padding-bottom: 2rem;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--accent-dark);
+      outline-offset: 2px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .mcb-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mcb-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .mcb-wordmark-badge {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .mcb-wordmark-text {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .mcb-toggle {
+      display: flex;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px;
+    }
+
+    .mcb-toggle-btn {
+      border: none;
+      background: transparent;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+
+    .mcb-toggle-btn.is-active {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .mcb-gate {
+      max-width: 420px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+
+    .mcb-gate-eyebrow {
+      color: var(--ink-soft);
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .mcb-gate-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem;
+    }
+
+    .mcb-gate-input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .mcb-table-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .mcb-table-option {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 10px;
+      padding: 0.8rem 0.7rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      transition: all 0.2s ease;
+    }
+
+    .mcb-table-option.is-selected {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--paper);
+    }
+
+    .mcb-btn {
+      background: var(--accent);
+      color: var(--paper);
+      border: none;
+      border-radius: 10px;
+      padding: 0.8rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      width: 100%;
+    }
+
+    .mcb-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .mcb-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .mcb-btn-ghost {
+      background: transparent;
+      color: var(--ink-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.7rem 1.3rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      width: 100%;
+      margin-top: 0.6rem;
+    }
+
+    .mcb-table-view {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+
+    .mcb-table-badge {
+      display: inline-block;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .mcb-cats {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .mcb-cat-btn {
+      flex: none;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink-soft);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .mcb-cat-btn.is-active {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .mcb-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .mcb-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+    }
+
+    .mcb-item-name {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.02rem;
+      margin: 0 0 0.15rem;
+    }
+
+    .mcb-item-desc {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      margin: 0 0 0.35rem;
+    }
+
+    .mcb-item-price {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .mcb-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex: none;
+    }
+
+    .mcb-add-btn {
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent-dark);
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .mcb-step-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .mcb-step-qty {
+      min-width: 1.2rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .mcb-cart-bar {
+      position: sticky;
+      bottom: 1rem;
+      margin-top: 1.2rem;
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(43, 27, 18, 0.25);
+    }
+
+    .mcb-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(43, 27, 18, 0.45);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .mcb-overlay.mcb-center {
+      align-items: center;
+    }
+
+    .mcb-sheet {
+      background: var(--paper);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 18px 18px 0 0;
+      padding: 1.4rem 1.4rem 1.6rem;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .mcb-sheet-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0 0 0.9rem;
+    }
+
+    .mcb-sheet-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .mcb-ticket-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      padding: 0.15rem 0;
+    }
+
+    .mcb-ticket-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 1rem;
+      border-top: 1px dashed var(--line);
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+    }
+
+    .mcb-confirm {
+      max-width: 460px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+
+    .mcb-confirm-eyebrow {
+      color: var(--ink-soft);
+      font-size: 0.85rem;
+      margin: 0 0 0.4rem;
+    }
+
+    .mcb-confirm-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 0 0 1.4rem;
+    }
+
+    .mcb-ticket {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      text-align: left;
+      margin-bottom: 1.2rem;
+    }
+
+    .mcb-status {
+      display: inline-block;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      background: var(--line);
+    }
+
+    .mcb-status-preparing {
+      background: #E7D9B8;
+      color: var(--accent-dark);
+    }
+
+    .mcb-status-served {
+      background: #DCE3D5;
+      color: var(--sage);
+    }
+
+    .mcb-admin {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+
+    .mcb-admin-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .mcb-admin-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .mcb-admin-tabs {
+      display: flex;
+      gap: 0.4rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px;
+    }
+
+    .mcb-admin-empty {
+      color: var(--ink-soft);
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .mcb-admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .mcb-order-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--rust);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+    }
+
+    .mcb-order-preparing {
+      border-left-color: var(--accent);
+    }
+
+    .mcb-order-served {
+      border-left-color: var(--sage);
+    }
+
+    .mcb-order-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .mcb-order-table {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .mcb-order-time {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+    }
+
+    .mcb-order-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .mcb-order-actions {
+      margin-top: 0.8rem;
+    }
+
+    .mcb-pin-card {
+      background: var(--paper);
+      border-radius: 16px;
+      padding: 1.6rem;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .mcb-pin-label {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      margin: 0 0 0.8rem;
+    }
+
+    .mcb-pin-input {
+      width: 100%;
+      text-align: center;
+      letter-spacing: 0.4em;
+      font-size: 1.3rem;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    .mcb-pin-error {
+      color: var(--rust);
+      font-size: 0.85rem;
+      margin: 0.6rem 0 0;
+    }
+
+    .mcb-pin-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .mcb-pin-row>* {
+      flex: 1;
+      margin-top: 0;
+    }
+
+    .mcb-setup-warning {
+      max-width: 480px;
+      margin: 4rem auto;
+      padding: 1.5rem;
+      background: var(--paper);
+      border: 1px solid var(--rust);
+      border-radius: 12px;
+      text-align: center;
+      color: var(--rust);
+    }
+
+    @media (max-width: 480px) {
+      .mcb-wordmark-text {
+        display: none;
+      }
+
+      .mcb-admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="file-warning" hidden
+    style="display:none; font-family:Arial,sans-serif; max-width:620px; margin:3rem auto; padding:1.5rem 1.25rem; border:1px solid #d8c7a5; border-radius:16px; background:#fffaf3; color:#2b1b12; line-height:1.5;">
+    <h2 style="margin:0 0 0.75rem; font-size:2rem;">Open via local server</h2>
+    <p style="margin:0 0 1rem;">This ordering page must be served over HTTP so the browser can access the counter logic
+      and Supabase correctly.</p>
+    <p style="margin:0;">
+      <a href="http://localhost:8000/order.html" style="color:#8a5a2b; font-weight:700; text-decoration:underline;">Open
+        order page on localhost</a>
+    </p>
+  </div>
+
+  <div id="app"></div>
+
+  <script>
+    if (location.protocol === "file:") {
+      const warning = document.getElementById("file-warning");
+      const app = document.getElementById("app");
+      if (warning) warning.hidden = false;
+      if (warning) warning.style.display = "block";
+      if (app) app.style.display = "none";
+      document.title = "Open via localhost · Mysuru Coffee Bar";
+    }
+    /* ============ CONFIG — fill these in with your Supabase project details ============ */
+    const SUPABASE_URL = "https://euhckmsacadznyrgilhg.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aGNrbXNhY2Fkem55cmdpbGhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxODkxMjcsImV4cCI6MjEwNDc2NTEyN30.Sn6y_khX2_XtfdeZh-PSPHleqsVEPzarnnltI-ChTBs";
+    const ADMIN_PIN = "3097";
+
+    const MENU = [
+      { id: "jag-coffee", cat: "Coffee", name: "Jaggery Filter Coffee", desc: "Filter coffee, sweetened the old way", price: 40 },
+      { id: "fil-coffee", cat: "Coffee", name: "Filter Coffee", desc: "Classic decoction, frothed steel tumbler", price: 30 },
+      { id: "cappuccino", cat: "Coffee", name: "Cappuccino", desc: "Espresso, steamed milk, soft foam", price: 80 },
+      { id: "cold-coffee", cat: "Coffee", name: "Cold Coffee", desc: "Iced, blended, a little indulgent", price: 90 },
+      { id: "masala-chai", cat: "Tea", name: "Masala Chai", desc: "Spiced milk tea, brewed strong", price: 20 },
+      { id: "lemon-tea", cat: "Tea", name: "Lemon Tea", desc: "Black tea, lemon, no milk", price: 30 },
+      { id: "ginger-tea", cat: "Tea", name: "Ginger Tea", desc: "Fresh ginger, brewed hot", price: 25 },
+      { id: "vada-pav", cat: "Snacks", name: "Vada Pav", desc: "Spiced potato fritter, soft pav, chutney", price: 35 },
+      { id: "samosa", cat: "Snacks", name: "Samosa (2 pcs)", desc: "Crisp pastry, spiced potato filling", price: 30 },
+      { id: "fries", cat: "Snacks", name: "French Fries", desc: "Salted, served hot with dip", price: 80 },
+      { id: "bread-omelette", cat: "Snacks", name: "Bread Omelette", desc: "Two eggs, buttered bread, pan-fried", price: 50 },
+      { id: "gobi", cat: "Starters", name: "Cheese Dry Gobi", desc: "Crisp cauliflower, cheese, chilli", price: 120 },
+      { id: "paneer-65", cat: "Starters", name: "Paneer 65", desc: "Pan-fried paneer, curry leaf, chilli", price: 140 },
+      { id: "chilli-potato", cat: "Starters", name: "Chilli Potato", desc: "Crisp potato, sweet-spicy glaze", price: 100 },
+      { id: "veg-fried-rice", cat: "Rice & Mains", name: "Veg Fried Rice", desc: "Wok-tossed rice, seasonal vegetables", price: 100 },
+      { id: "curd-rice", cat: "Rice & Mains", name: "Curd Rice", desc: "Cooling, tempered with curry leaf", price: 60 },
+      { id: "lemon-rice", cat: "Rice & Mains", name: "Lemon Rice", desc: "Tangy, tempered rice", price: 60 },
+      { id: "mango-shake", cat: "Beverages", name: "Mango Shake", desc: "Thick, chilled, seasonal mango", price: 70 },
+      { id: "lime-soda", cat: "Beverages", name: "Fresh Lime Soda", desc: "Sweet or salted, on ice", price: 40 },
+      { id: "buttermilk", cat: "Beverages", name: "Buttermilk", desc: "Spiced, churned, cooling", price: 30 },
+    ];
+    const CATEGORIES = ["Coffee", "Tea", "Snacks", "Starters", "Rice & Mains", "Beverages"];
+    const MAX_TABLES = 8;
+
+    function normalizeTableNumber(value) {
+      const digits = String(value ?? "").replace(/\D/g, "");
+      if (!digits) return "";
+      const n = Number(digits);
+      if (!Number.isInteger(n) || n < 1 || n > MAX_TABLES) return "";
+      return String(n);
+    }
+
+    const app = document.getElementById("app");
+
+    if (!window.supabase) {
+      app.innerHTML = `<div class="mcb-setup-warning">
+    <strong>Supabase SDK missing.</strong><br/>
+    The browser script for Supabase did not load. Refresh the page or check your internet connection.
+  </div>`;
+      throw new Error("Supabase SDK not loaded");
+    }
+
+    if (!SUPABASE_URL.startsWith("http") || SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY") {
+      app.innerHTML = `<div class="mcb-setup-warning">
+    <strong>Setup needed.</strong><br/>
+    Open this file and fill in <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code>
+    near the top of the &lt;script&gt; tag before this page will work.
+  </div>`;
+      throw new Error("Supabase not configured");
+    }
+
+    const mcbSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const LOCAL_ORDERS_KEY = "mcb_local_orders";
+
+    function readLocalOrders() {
+      try {
+        const raw = localStorage.getItem(LOCAL_ORDERS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeLocalOrders(orders) {
+      try {
+        localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(orders));
+      } catch (error) {
+        // ignore storage issues and keep the app working in-memory
+      }
+    }
+
+    // ---------- state ----------
+    let state = {
+      view: "table",
+      table: "",
+      tableConfirmed: false,
+      activeCat: CATEGORIES[0],
+      cart: {},
+      ticketOpen: false,
+      placedOrder: null,
+      placing: false,
+      error: "",
+      pinModal: false,
+      pinInput: "",
+      pinError: false,
+      adminOrders: [],
+      adminTab: "active",
+      adminLoading: true,
+    };
+    let ownOrderPoll = null;
+    let adminPoll = null;
+    let adminChannel = null;
+
+    function cartCount() { return Object.values(state.cart).reduce((a, b) => a + b, 0); }
+    function cartTotal() {
+      return Object.entries(state.cart).reduce((sum, [id, qty]) => {
+        const item = MENU.find((m) => m.id === id);
+        return sum + (item ? item.price * qty : 0);
+      }, 0);
+    }
+    function timeAgo(iso) {
+      const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+      if (s < 60) return "just now";
+      const m = Math.floor(s / 60);
+      if (m < 60) return `${m} min ago`;
+      const h = Math.floor(m / 60);
+      return `${h} hr ${m % 60}m ago`;
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    // ---------- render ----------
+    function render() {
+      app.innerHTML = `
+    ${renderTopbar()}
+    <div id="view-slot"></div>
+    ${state.pinModal ? renderPinModal() : ""}
+  `;
+      const slot = document.getElementById("view-slot");
+      slot.innerHTML = state.view === "table" ? renderTableView() : renderAdminView();
+      attachHandlers();
+    }
+
+    function renderTopbar() {
+      return `
+    <div class="mcb-topbar">
+      <div class="mcb-wordmark">
+        <span class="mcb-wordmark-badge">MCB</span>
+        <span class="mcb-wordmark-text">Mysuru Coffee Bar</span>
+      </div>
+      <div class="mcb-toggle">
+        <button class="mcb-toggle-btn ${state.view === "table" ? "is-active" : ""}" type="button" data-action="view-table" onclick="state.view='table'; render();">Table</button>
+        <button class="mcb-toggle-btn ${state.view === "admin" ? "is-active" : ""}" type="button" data-action="view-admin" onclick="state.pinModal=true; state.pinInput=''; state.pinError=false; render();">Counter</button>
+      </div>
+    </div>`;
+    }
+
+    function renderPinModal() {
+      return `
+    <div class="mcb-overlay mcb-center" data-action="close-pin">
+      <div class="mcb-pin-card" onclick="event.stopPropagation()">
+        <p class="mcb-pin-label">Counter PIN</p>
+        <input class="mcb-pin-input" id="pin-input" type="password" inputmode="numeric" maxlength="4" value="${esc(state.pinInput)}" />
+        ${state.pinError ? `<p class="mcb-pin-error">Wrong PIN, try again</p>` : ""}
+        <div class="mcb-pin-row">
+          <button class="mcb-btn-ghost" type="button" data-action="close-pin" onclick="state.pinModal=false; render();">Cancel</button>
+          <button class="mcb-btn" type="button" data-action="submit-pin" onclick="submitPin()">Enter</button>
+        </div>
+      </div>
+    </div>`;
+    }
+
+    function renderTableView() {
+      if (!state.tableConfirmed) {
+        return `
+      <div class="mcb-gate">
+        <p class="mcb-gate-eyebrow">Before we start</p>
+        <h1 class="mcb-gate-title">Choose your table</h1>
+        <p class="mcb-gate-copy">Select one of the 8 tables below.</p>
+        <div class="mcb-table-grid">
+          ${Array.from({ length: MAX_TABLES }, (_, index) => {
+          const tableNo = String(index + 1);
+          const selected = state.table === tableNo ? "is-selected" : "";
+          const pressed = state.table === tableNo ? "true" : "false";
+          return `<button class="mcb-table-option ${selected}" type="button" aria-pressed="${pressed}" data-action="select-table" data-table="${tableNo}">Table ${tableNo}</button>`;
+        }).join("")}
+        </div>
+        <button class="mcb-btn" data-action="confirm-table" ${normalizeTableNumber(state.table) ? "" : "disabled"}>Start ordering</button>
+      </div>`;
+      }
+
+      if (state.placedOrder) {
+        const o = state.placedOrder;
+        const statusCopy = { new: "Sent to the counter", preparing: "Being made now", served: "On its way to your table" };
+        return `
+      <div class="mcb-confirm">
+        <p class="mcb-confirm-eyebrow">Table ${esc(o.table_number)}</p>
+        <h1 class="mcb-confirm-title">Order sent.</h1>
+        <div class="mcb-ticket">
+          ${o.items.map((it) => `<div class="mcb-ticket-row"><span>${it.qty} × ${esc(it.name)}</span><span>₹${it.price * it.qty}</span></div>`).join("")}
+          <div class="mcb-ticket-total"><span>Total</span><span>₹${o.total}</span></div>
+        </div>
+        <div class="mcb-status mcb-status-${o.status}">${statusCopy[o.status] || "Sent to the counter"}</div>
+        <button class="mcb-btn-ghost" data-action="new-order">Place another order</button>
+      </div>`;
+      }
+
+      const items = MENU.filter((m) => m.cat === state.activeCat);
+      return `
+    <div class="mcb-table-view">
+      <div class="mcb-table-badge">Table ${esc(state.table)}</div>
+      <div class="mcb-cats">
+        ${CATEGORIES.map((c) => `<button class="mcb-cat-btn ${state.activeCat === c ? "is-active" : ""}" data-action="set-cat" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}
+      </div>
+      <div class="mcb-items">
+        ${items.map((item) => `
+          <div class="mcb-item">
+            <div class="mcb-item-info">
+              <p class="mcb-item-name">${esc(item.name)}</p>
+              <p class="mcb-item-desc">${esc(item.desc)}</p>
+              <p class="mcb-item-price">₹${item.price}</p>
+            </div>
+            <div class="mcb-stepper">
+              ${state.cart[item.id]
+          ? `<button class="mcb-step-btn" data-action="remove-item" data-id="${item.id}">−</button>
+                   <span class="mcb-step-qty">${state.cart[item.id]}</span>
+                   <button class="mcb-step-btn" data-action="add-item" data-id="${item.id}">+</button>`
+          : `<button class="mcb-add-btn" data-action="add-item" data-id="${item.id}">Add</button>`}
+            </div>
+          </div>`).join("")}
+      </div>
+      ${cartCount() > 0 && !state.ticketOpen ? `
+        <button class="mcb-cart-bar" data-action="open-ticket">
+          <span>${cartCount()} item${cartCount() > 1 ? "s" : ""}</span>
+          <span>₹${cartTotal()} · Review order</span>
+        </button>` : ""}
+      ${state.ticketOpen ? renderTicketSheet() : ""}
+    </div>`;
+    }
+
+    function renderTicketSheet() {
+      return `
+    <div class="mcb-overlay" data-action="close-ticket">
+      <div class="mcb-sheet" onclick="event.stopPropagation()">
+        <p class="mcb-sheet-title">Your order · Table ${esc(state.table)}</p>
+        <div class="mcb-sheet-items">
+          ${Object.entries(state.cart).map(([id, qty]) => {
+        const item = MENU.find((m) => m.id === id);
+        return `<div class="mcb-ticket-row"><span>${qty} × ${esc(item.name)}</span><span>₹${item.price * qty}</span></div>`;
+      }).join("")}
+        </div>
+        <div class="mcb-ticket-total"><span>Total</span><span>₹${cartTotal()}</span></div>
+        ${state.error ? `<p class="mcb-pin-error">${esc(state.error)}</p>` : ""}
+        <button class="mcb-btn" type="button" data-action="place-order" onclick="placeOrder()" ${state.placing ? "disabled" : ""}>${state.placing ? "Placing order…" : "Place order"}</button>
+        <button class="mcb-btn-ghost" type="button" data-action="close-ticket">Keep browsing</button>
+      </div>
+    </div>`;
+    }
+
+    function renderAdminView() {
+      const active = state.adminOrders.filter((o) => o.status !== "served");
+      const served = state.adminOrders.filter((o) => o.status === "served");
+      const shown = state.adminTab === "active" ? active : served;
+      return `
+    <div class="mcb-admin">
+      <div class="mcb-admin-head">
+        <h1 class="mcb-admin-title">Counter</h1>
+        <div class="mcb-admin-tabs">
+          <button class="mcb-toggle-btn ${state.adminTab === "active" ? "is-active" : ""}" data-action="admin-tab" data-tab="active">Active (${active.length})</button>
+          <button class="mcb-toggle-btn ${state.adminTab === "served" ? "is-active" : ""}" data-action="admin-tab" data-tab="served">Served (${served.length})</button>
+        </div>
+      </div>
+      ${state.adminLoading ? `<p class="mcb-admin-empty">Loading orders…</p>` : ""}
+      ${!state.adminLoading && shown.length === 0 ? `<p class="mcb-admin-empty">${state.adminTab === "active" ? "No open orders right now." : "Nothing served yet."}</p>` : ""}
+      <div class="mcb-admin-grid">
+        ${shown.map((order) => `
+          <div class="mcb-order-card mcb-order-${order.status}">
+            <div class="mcb-order-top">
+              <span class="mcb-order-table">Table ${esc(order.table_number)}</span>
+              <span class="mcb-order-time">${timeAgo(order.created_at)}</span>
+            </div>
+            <div class="mcb-order-items">
+              ${order.items.map((it) => `<div class="mcb-ticket-row"><span>${it.qty} × ${esc(it.name)}</span><span>₹${it.price * it.qty}</span></div>`).join("")}
+            </div>
+            <div class="mcb-ticket-total"><span>Total</span><span>₹${order.total}</span></div>
+            <div class="mcb-order-actions">
+              ${order.status !== "served"
+          ? `<button class="mcb-btn" data-action="advance-order" data-id="${order.id}">${order.status === "new" ? "Start preparing" : "Mark served"}</button>`
+          : `<button class="mcb-btn-ghost" data-action="clear-order" data-id="${order.id}">Clear</button>`}
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>`;
+    }
+
+    // ---------- event handling (delegated) ----------
+    function attachHandlers() {
+      const tableInput = document.getElementById("table-input");
+      if (tableInput) {
+        tableInput.oninput = (e) => {
+          const nextValue = normalizeTableNumber(e.target.value);
+          state.table = nextValue || "";
+          const button = document.querySelector('[data-action="confirm-table"]');
+          if (button) button.disabled = !normalizeTableNumber(state.table);
+        };
+        tableInput.onkeydown = (e) => { if (e.key === "Enter" && normalizeTableNumber(state.table)) confirmTable(); };
+      }
+      const pinInput = document.getElementById("pin-input");
+      if (pinInput) {
+        pinInput.focus();
+        pinInput.oninput = (e) => { state.pinInput = e.target.value.replace(/\D/g, ""); state.pinError = false; };
+        pinInput.onkeydown = (e) => { if (e.key === "Enter") submitPin(); };
+      }
+
+      app.onclick = (e) => {
+        const el = e.target.closest("[data-action]");
+        if (!el) return;
+        const action = el.dataset.action;
+        if (action === "view-table") { state.view = "table"; render(); }
+        else if (action === "view-admin") { state.pinModal = true; state.pinInput = ""; state.pinError = false; render(); }
+        else if (action === "close-pin") { state.pinModal = false; render(); }
+        else if (action === "submit-pin") submitPin();
+        else if (action === "select-table") {
+          const selected = normalizeTableNumber(el.dataset.table);
+          if (!selected) return;
+          state.table = selected;
+          render();
+        }
+        else if (action === "confirm-table") confirmTable();
+        else if (action === "set-cat") { state.activeCat = el.dataset.cat; render(); }
+        else if (action === "add-item") { state.cart[el.dataset.id] = (state.cart[el.dataset.id] || 0) + 1; render(); }
+        else if (action === "remove-item") {
+          const id = el.dataset.id;
+          state.cart[id] -= 1;
+          if (state.cart[id] <= 0) delete state.cart[id];
+          render();
+        }
+        else if (action === "open-ticket") { state.ticketOpen = true; render(); }
+        else if (action === "close-ticket") { state.ticketOpen = false; render(); }
+        else if (action === "place-order") placeOrder();
+        else if (action === "new-order") {
+          state.table = state.placedOrder.table_number;
+          state.placedOrder = null;
+          clearInterval(ownOrderPoll);
+          render();
+        }
+        else if (action === "admin-tab") { state.adminTab = el.dataset.tab; render(); }
+        else if (action === "advance-order") advanceOrder(el.dataset.id);
+        else if (action === "clear-order") clearOrder(el.dataset.id);
+      };
+    }
+
+    function confirmTable() {
+      const tableInput = document.getElementById("table-input");
+      const nextTable = normalizeTableNumber(tableInput ? tableInput.value : state.table);
+      if (!nextTable) return;
+      state.table = nextTable;
+      state.tableConfirmed = true;
+      render();
+    }
+
+    function submitPin() {
+      const pinInput = document.getElementById("pin-input");
+      const nextPin = pinInput ? String(pinInput.value).replace(/\D/g, "") : state.pinInput;
+      state.pinInput = nextPin;
+
+      if (state.pinInput === ADMIN_PIN) {
+        state.pinModal = false;
+        state.view = "admin";
+        state.pinError = false;
+        render();
+        startAdminPolling();
+      } else {
+        state.pinError = true;
+        render();
+      }
+    }
+
+    async function insertOrderRecord(payload) {
+      let createdOrder = null;
+
+      try {
+        const { data, error } = await mcbSupabase
+          .from("orders")
+          .insert(payload)
+          .select()
+          .single();
+
+        if (!error && data) {
+          createdOrder = data;
+        }
+      } catch (error) {
+        // fall through to backup path below
+      }
+
+      if (!createdOrder) {
+        try {
+          const restUrl = `${SUPABASE_URL.replace(/\/$/, "")}/rest/v1/orders`;
+          const response = await fetch(restUrl, {
+            method: "POST",
+            headers: {
+              "apikey": SUPABASE_ANON_KEY,
+              "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+              "Content-Type": "application/json",
+              "Prefer": "return=representation"
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const text = await response.text();
+          if (response.ok) {
+            let parsed = [];
+            try {
+              parsed = JSON.parse(text);
+            } catch (e) {
+              parsed = [];
+            }
+            const created = Array.isArray(parsed) ? parsed[0] : parsed;
+            if (created) createdOrder = created;
+          }
+        } catch (error) {
+          // fall through to local storage fallback below
+        }
+      }
+
+      if (!createdOrder) {
+        createdOrder = {
+          ...payload,
+          id: (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : `local-${Date.now()}`,
+          created_at: new Date().toISOString()
+        };
+      }
+
+      const currentOrders = readLocalOrders();
+      const updatedOrders = [createdOrder, ...currentOrders];
+      writeLocalOrders(updatedOrders);
+      return { data: createdOrder, error: null };
+    }
+
+    window.placeOrder = placeOrder;
+
+    async function placeOrder() {
+      if (cartCount() === 0) return;
+      state.placing = true;
+      state.error = "";
+      render();
+
+      const items = Object.entries(state.cart).map(([id, qty]) => {
+        const item = MENU.find((m) => m.id === id);
+        return { id, name: item.name, price: item.price, qty };
+      });
+      const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+      const payload = { table_number: state.table.trim() || "?", items, total, status: "new" };
+
+      let data = null;
+      let errorMessage = "";
+
+      try {
+        const result = await insertOrderRecord(payload);
+        data = result.data;
+      } catch (error) {
+        errorMessage = error.message || "Couldn't send the order. Please try again.";
+      }
+
+      state.placing = false;
+      if (!data) {
+        state.error = errorMessage || "Couldn't send the order. Please try again.";
+        render();
+        return;
+      }
+      state.placedOrder = data;
+      state.cart = {};
+      state.ticketOpen = false;
+      render();
+      startOwnOrderPolling(data.id);
+    }
+
+    function startOwnOrderPolling(orderId) {
+      clearInterval(ownOrderPoll);
+      ownOrderPoll = setInterval(async () => {
+        const { data } = await mcbSupabase.from("orders").select("*").eq("id", orderId).single();
+        if (data && state.placedOrder && state.placedOrder.id === orderId) {
+          state.placedOrder = data;
+          render();
+        }
+      }, 4000);
+    }
+
+    async function fetchAdminOrders() {
+      const localOrders = readLocalOrders();
+      state.adminOrders = localOrders;
+      try {
+        const { data, error } = await mcbSupabase.from("orders").select("*").order("created_at", { ascending: true });
+        if (!error && data && data.length) {
+          const merged = [...data, ...localOrders.filter((localOrder) => !data.some((remoteOrder) => remoteOrder.id === localOrder.id))];
+          state.adminOrders = merged;
+          writeLocalOrders(merged);
+        }
+      } catch (error) {
+        state.adminOrders = localOrders;
+      }
+      state.adminLoading = false;
+      if (state.view === "admin") render();
+    }
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === LOCAL_ORDERS_KEY && state.view === "admin") {
+        state.adminOrders = readLocalOrders();
+        render();
+      }
+    });
+
+    function startAdminPolling() {
+      fetchAdminOrders();
+
+      if (adminChannel) {
+        if (typeof mcbSupabase.removeChannel === "function") {
+          mcbSupabase.removeChannel(adminChannel);
+        } else if (typeof adminChannel.unsubscribe === "function") {
+          adminChannel.unsubscribe();
+        }
+        adminChannel = null;
+      }
+
+      try {
+        if (typeof mcbSupabase.on === "function") {
+          adminChannel = mcbSupabase
+            .channel("orders-realtime")
+            .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, fetchAdminOrders)
+            .subscribe();
+        } else if (typeof mcbSupabase.channel === "function") {
+          adminChannel = mcbSupabase.channel("orders-realtime");
+          adminChannel.on("postgres_changes", { event: "*", schema: "public", table: "orders" }, fetchAdminOrders);
+          adminChannel.subscribe();
+        }
+      } catch (error) {
+        console.warn("Realtime updates unavailable; polling fallback remains active.", error);
+      }
+
+      clearInterval(adminPoll);
+      adminPoll = setInterval(fetchAdminOrders, 6000); // fallback if realtime isn't enabled
+    }
+
+    async function advanceOrder(id) {
+      const order = state.adminOrders.find((o) => o.id === id);
+      if (!order) return;
+      const next = order.status === "new" ? "preparing" : "served";
+      order.status = next;
+      state.adminOrders = [...state.adminOrders];
+      writeLocalOrders(state.adminOrders);
+      render();
+      try {
+        await mcbSupabase.from("orders").update({ status: next }).eq("id", id);
+      } catch (error) {
+        // local fallback is already in place
+      }
+    }
+
+    async function clearOrder(id) {
+      state.adminOrders = state.adminOrders.filter((o) => o.id !== id);
+      writeLocalOrders(state.adminOrders);
+      render();
+      try {
+        await mcbSupabase.from("orders").delete().eq("id", id);
+      } catch (error) {
+        // local fallback is already in place
+      }
+    }
+
+    render();
+  </script>
+</body>
+
+</html>

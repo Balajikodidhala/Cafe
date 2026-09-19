@@ -1,0 +1,620 @@
+﻿cd "c:\Users\balaj\OneDrive\Desktop\cafe\mysore"
+python -m http.server 8000
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mysuru Coffee Bar</title>
+  <meta name="description" content="Mysuru Coffee Bar serves fresh coffee, snacks, and warm cafe vibes in Mysuru." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    :root {
+      --bg: #f4eadb;
+      --paper: #fffaf3;
+      --ink: #2b1b12;
+      --muted: #6d584a;
+      --accent: #8a5a2b;
+      --accent-dark: #6f421f;
+      --line: #d8c7a5;
+      --sage: #596d52;
+      --shadow: rgba(43, 27, 18, 0.11);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(250, 246, 239, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .nav a:hover {
+      color: var(--ink);
+    }
+
+    .cta {
+      display: inline-block;
+      padding: 0.85rem 1.45rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--paper);
+      font-weight: 700;
+      box-shadow: 0 10px 22px var(--shadow);
+    }
+
+    .cta:hover {
+      background: var(--accent-dark);
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(237, 227, 208, 0.7), rgba(255, 250, 243, 0.9)),
+        url('https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      min-height: 620px;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2rem;
+      align-items: center;
+      padding: 4rem 0;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 1rem 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(2.7rem, 6vw, 5rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 620px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .secondary {
+      display: inline-block;
+      padding: 0.8rem 1.3rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      font-weight: 700;
+    }
+
+    .hero-card {
+      background: rgba(255, 250, 243, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 1.2rem;
+      box-shadow: 0 18px 38px var(--shadow);
+      transform: perspective(900px) rotateY(-5deg) rotateX(2deg);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .hero-card:hover {
+      transform: perspective(900px) rotateY(0deg) rotateX(0deg) translateY(-8px);
+      box-shadow: 0 26px 52px rgba(43, 27, 18, 0.18);
+    }
+
+    .mini-badge {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: 0.38rem 0.72rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .spotlight {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .spotlight img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .spotlight-copy {
+      padding: 1rem 1rem 1.2rem;
+    }
+
+    .spotlight-copy h3 {
+      margin: 0 0 0.35rem;
+    }
+
+    .spotlight-copy p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    section {
+      padding: 4rem 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.7rem;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.04em;
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 600px;
+      color: var(--muted);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.2rem;
+    }
+
+    .feature-box {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1.4rem;
+    }
+
+    .feature-box .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #f1e5d1;
+      font-size: 1.35rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .feature-box h3 {
+      margin: 0 0 0.45rem;
+    }
+
+    .feature-box p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.2rem;
+    }
+
+    .menu-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1.2rem;
+      box-shadow: 0 8px 18px rgba(43, 27, 18, 0.04);
+      transform: perspective(700px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .menu-card:hover {
+      transform: perspective(700px) translateY(-8px) rotateX(3deg);
+      box-shadow: 0 20px 34px rgba(43, 27, 18, 0.16);
+    }
+
+    .menu-card .price {
+      margin-top: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-dark);
+      font-size: 1.1rem;
+    }
+
+    .menu-card h3 {
+      margin: 0.4rem 0;
+    }
+
+    .menu-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .visit {
+      background: #f9f3e8;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .visit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .order-section {
+      background: var(--ink);
+      color: var(--paper);
+      overflow: hidden;
+    }
+
+    .order-section .section-head p {
+      color: #d8c7a5;
+    }
+
+    .order-frame {
+      width: 100%;
+      height: 980px;
+      display: block;
+      border: 1px solid #6d584a;
+      border-radius: 24px;
+      background: var(--bg);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .info-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 1.5rem;
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+
+    .info-card p,
+    .info-card li {
+      color: var(--muted);
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    footer {
+      background: var(--ink);
+      color: #f3e9d6;
+      padding: 2rem 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 860px) {
+
+      .hero-grid,
+      .features,
+      .menu-grid,
+      .visit-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .topbar-inner {
+        justify-content: center;
+      }
+
+      .hero-card {
+        transform: none;
+      }
+
+      .order-frame {
+        height: 1050px;
+        border-radius: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="file-warning" hidden
+    style="display:none; font-family:Arial,sans-serif; max-width:620px; margin:3rem auto; padding:1.5rem 1.25rem; border:1px solid #d8c7a5; border-radius:16px; background:#fffaf3; color:#2b1b12; line-height:1.5;">
+    <h2 style="margin:0 0 0.75rem; font-size:2rem;">Open via local server</h2>
+    <p style="margin:0 0 1rem;">This cafe site and ordering flow must run over HTTP for the counter and order buttons to
+      work correctly.</p>
+    <p style="margin:0;">
+      <a href="http://localhost:8000/" style="color:#8a5a2b; font-weight:700; text-decoration:underline;">Open homepage
+        on localhost</a>
+    </p>
+  </div>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">MCB</div>
+        <span>Mysuru Coffee Bar</span>
+      </div>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#menu">Menu</a>
+        <a href="#visit">Visit</a>
+        <a href="#order">Order Now</a>
+      </nav>
+
+      <a class="cta" href="#order">Table Order</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Freshly brewed daily</span>
+          <h1>Slow coffee. Warm food. Good Mysuru energy.</h1>
+          <p>
+            Welcome to Mysuru Coffee Bar, where rich filter coffee, classic snacks, and great conversations come
+            together in a cozy cafe setting.
+            Order from your table and enjoy a relaxed dining experience without waiting at the counter.
+          </p>
+
+          <div class="hero-actions">
+            <a class="cta" href="#order">Order from table</a>
+            <a class="secondary" href="#menu">Explore menu</a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <span class="mini-badge">Popular this week</span>
+          <div class="spotlight">
+            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80"
+              alt="Coffee cup and beans" />
+            <div class="spotlight-copy">
+              <h3>Jaggery Filter Coffee</h3>
+              <p>Traditional Mysore-style flavor with rich aroma and a smooth finish.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <h2>Made for coffee lovers</h2>
+          <p>From morning filter coffee to quick bites and evening catch-ups, we serve comfort in every cup and plate.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature-box">
+            <div class="icon">☕</div>
+            <h3>Traditional brews</h3>
+            <p>Fresh filter coffee, masala chai, and rich café classics served with authenticity.</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="icon">🥐</div>
+            <h3>Quick bites</h3>
+            <p>Comforting snacks and easy meals that go perfectly with your favorite drink.</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="icon">📍</div>
+            <h3>Easy ordering</h3>
+            <p>Choose your table and place the order directly from your phone without waiting.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu">
+      <div class="container">
+        <div class="section-head">
+          <h2>Favorite picks</h2>
+          <p>Simple, satisfying food and drinks made for a slow cafe break.</p>
+        </div>
+
+        <div class="menu-grid">
+          <article class="menu-card">
+            <span class="eyebrow">Coffee</span>
+            <h3>Filter Coffee</h3>
+            <p>Classic south Indian coffee with warm, comforting flavor.</p>
+            <div class="price">₹30</div>
+          </article>
+
+          <article class="menu-card">
+            <span class="eyebrow">Tea</span>
+            <h3>Masala Chai</h3>
+            <p>Strong tea with milk and aromatic spice.</p>
+            <div class="price">₹20</div>
+          </article>
+
+          <article class="menu-card">
+            <span class="eyebrow">Snack</span>
+            <h3>Vada Pav</h3>
+            <p>Comforting, savory, and perfect with tea.</p>
+            <div class="price">₹35</div>
+          </article>
+
+          <article class="menu-card">
+            <span class="eyebrow">Starters</span>
+            <h3>Paneer 65</h3>
+            <p>Crisp, spiced, and packed with flavor.</p>
+            <div class="price">₹140</div>
+          </article>
+
+          <article class="menu-card">
+            <span class="eyebrow">Beverage</span>
+            <h3>Mango Shake</h3>
+            <p>Cool, creamy, and refreshing.</p>
+            <div class="price">₹70</div>
+          </article>
+
+          <article class="menu-card">
+            <span class="eyebrow">Rice</span>
+            <h3>Curd Rice</h3>
+            <p>Light and soothing comfort food.</p>
+            <div class="price">₹60</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="order-section" id="order">
+      <div class="container">
+        <div class="section-head">
+          <h2>Order from your table</h2>
+          <p>Choose your table, build your order, and send it straight to the counter.</p>
+        </div>
+        <iframe class="order-frame" src="order.html" title="Mysuru Coffee Bar table ordering"></iframe>
+      </div>
+    </section>
+
+    <section class="visit" id="visit">
+      <div class="container visit-grid">
+        <div class="info-card">
+          <h3>Visit Mysuru Coffee Bar</h3>
+          <p>Take a break, settle in, and enjoy a quiet moment with a hot cup of coffee and fresh snacks.</p>
+          <ul class="info-list">
+            <li>📍 24 Market Road, Mysuru</li>
+            <li>🕒 Open daily: 6:30 AM – 10:30 PM</li>
+            <li>📞 +91 98765 43210</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Order from your table</h3>
+          <p>Skip the queue and place your order directly from your phone.</p>
+          <p>Choose your table, select your favorite items, and send the order straight to the counter.</p>
+          <div style="margin-top: 1rem;">
+            <a class="cta" href="#order">Open order page</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>Mysuru Coffee Bar</div>
+      <div>Fresh coffee, warm plates, and happy moments.</div>
+    </div>
+  </footer>
+</body>
+
+</html>
