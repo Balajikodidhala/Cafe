@@ -12,6 +12,16 @@ with no build step and no Node.js requirement.
 
 GitHub: <https://github.com/Balajikodidhala/Cafe>
 
+## Screenshots
+
+### Homepage
+
+![Mysuru Coffee Bar homepage](screenshots/homepage.png)
+
+### Table selection
+
+![Choose one of eight tables](screenshots/table-selector.png)
+
 ## What the website includes
 
 ### Customer experience
