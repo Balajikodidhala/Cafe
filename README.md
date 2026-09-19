@@ -12,6 +12,10 @@ with no build step and no Node.js requirement.
 
 GitHub: <https://github.com/Balajikodidhala/Cafe>
 
+## Developer profile
+
+Portfolio: <https://balajikodidhala.github.io/Portfolio/>
+
 ## Screenshots
 
 ### Homepage
